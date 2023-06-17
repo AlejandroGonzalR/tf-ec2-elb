@@ -5,10 +5,6 @@ locals {
   vpc_cidr_block  = "10.0.0.0/16"
 
   availabilities_zones_suffixes = ["A", "B"]
-
-  global_tags = {
-    Environment = local.workspace_name
-  }
 }
 
 module "networking" {
@@ -18,10 +14,10 @@ module "networking" {
   vpc_cidr_block = local.vpc_cidr_block
 
   subnets = [
-    for subnet in local.availabilities_zones_suffixes :
+    for idx, subnet in local.availabilities_zones_suffixes :
     {
       name                    = "Test instance ${subnet}"
-      cidr_block              = cidrsubnet(local.vpc_cidr_block, local.subnets_newbits, subnet_num)
+      cidr_block              = cidrsubnet(local.vpc_cidr_block, local.subnets_newbits, idx)
       availability_zone       = "us-east-1${subnet}"
       map_public_ip_on_launch = false
     }
