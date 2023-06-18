@@ -1,9 +1,13 @@
+locals {
+  account_id = "480690677361"
+}
+
 terraform {
   backend "s3" {
     bucket         = "terraform-remote-state"
-    key            = "test/ec2-elb-instance.tfstate"
+    key            = "test/ec2-elb.tfstate"
     encrypt        = true
-    kms_key_id     = "arn:aws:kms:us-east-1:676256863214:alias/tf-s3-state-bucket-kms-key"
+    kms_key_id     = "arn:aws:kms:us-east-1:${local.account_id}:alias/tf-s3-state-bucket-kms-key"
     dynamodb_table = "terraform-state-lock"
     region         = "us-east-1"
   }
