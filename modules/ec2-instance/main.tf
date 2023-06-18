@@ -61,17 +61,17 @@ resource "random_password" "non_root_user_password" {
 }
 
 resource "aws_ssm_parameter" "non_root_username" { # Save the non root username on the AWS Parameter Store
-  name      = "/${local.normalized_instance_name}/non-root-username"
-  type      = "SecureString"
-  value     = var.non_root_username
-  tags      = var.global_tags
+  name  = "/${local.normalized_instance_name}/non-root-username"
+  type  = "SecureString"
+  value = var.non_root_username
+  tags  = var.global_tags
 }
 
 resource "aws_ssm_parameter" "non_root_user_password" { # Save the non root user password on the AWS Parameter Store
-  name      = "/${local.normalized_instance_name}/non-root-user-password"
-  type      = "SecureString"
-  value     = random_password.non_root_user_password.result
-  tags      = var.global_tags
+  name  = "/${local.normalized_instance_name}/non-root-user-password"
+  type  = "SecureString"
+  value = random_password.non_root_user_password.result
+  tags  = var.global_tags
 }
 
 #####################################
