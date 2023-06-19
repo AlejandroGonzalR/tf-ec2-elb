@@ -1,0 +1,62 @@
+name: 'Code Quality - pre-commit hooks'
+
+description: 'Install and run pre-commit hooks for linting and testing purposes on CI'
+
+inputs:
+  python-version:
+    description: 'Python version to install pre-commit'
+    required: true
+    default: '3.9'
+  python-arch:
+    description: 'Python architecture to install pre-commit'
+    required: true
+    default: 'x64'
+  precommit-cache-path:
+    description: 'Path to update and restore pre-commit cache'
+    required: true
+    default: '.cache/pre-commit'
+  precommit-version:
+    description: 'Pre-commit version to use for checks'
+    required: true
+    default: '2.20.0'
+  precommit-config:
+    description: 'Pre-commit configuration file absolute path'
+    required: true
+    default: '.pre-commit-config.yaml'
+  pre-commit-extra-args:
+    description: 'Options to pass to pre-commit run'
+    required: false
+    default: '--all-files'
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+        architecture: ${{ inputs.python-arch }}
+
+    - name: Install `pre-commit` tools via `make`
+      run: |
+        make packages/install
+      shell: sh
+
+    - name: Setup `pre-commit`
+      if: steps.cache-precommit.outputs.cache-hit != 'true'
+      run: |
+        pre-commit install \
+          --config "${{ github.workspace }}${{ env.UPSTREAM_REP }}/${{ inputs.precommit-config }}"
+      working-directory: "${{ github.workspace }}/${{ env.SELF_PATH }}"
+      shell: sh
+
+    - id: pre-commit
+      name: Run `pre-commit`
+      run: |
+        pre-commit run \
+          --config "${{ github.workspace }}/${{ env.META_PATH }}/${{ inputs.precommit-config }}" \
+          --show-diff-on-failure \
+          ${{ inputs.pre-commit-extra-args }}
+      working-directory: "${{ github.workspace }}/${{ env.SELF_PATH }}"
+      shell: sh
