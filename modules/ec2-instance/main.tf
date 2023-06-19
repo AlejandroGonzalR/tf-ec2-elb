@@ -9,7 +9,7 @@ data "aws_ami" "default" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
 
   filter {
@@ -19,8 +19,7 @@ data "aws_ami" "default" {
 }
 
 resource "aws_instance" "this" {
-  # Amazon machine instance ID for Ubuntu 20.04 LTS AMD x86_64
-  ami                         = var.machine_image != "" ? var.machine_image : one(data.aws_ami.default[*].image_id) # "ami-09e67e426f25ce0d7"
+  ami                         = var.machine_image != "" ? var.machine_image : one(data.aws_ami.default[*].image_id)
   instance_type               = var.instance_type
   key_name                    = aws_key_pair.instance_key.key_name
   subnet_id                   = var.subnet
